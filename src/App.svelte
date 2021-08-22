@@ -11,13 +11,20 @@
 
 	import { userSession, userData } from './lib/sessionStore';
 	import { supabase } from './lib/supabaseClient';
+	import { onMount } from 'svelte';
 
-	let link: string = process.env.isProd ? 'communities' : 'communities';
+	let link: string = process.env.isProd ? 'communities' : 'communities'; // In case a view needs to be tested
 
 	function handleNav(to: string) {
 		link = to;
-		document.title = to[0].toUpperCase() + to.slice(1);
+		const title = `${to[0].toUpperCase()}${to.slice(1)}`;
+		document.title = title;
+		window.history.pushState(null, title, to);
 	}
+
+	onMount(() => {
+		handleNav(link);
+	});
 
 	userSession.set(supabase.auth.user());
 
